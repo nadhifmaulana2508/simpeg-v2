@@ -1,0 +1,28 @@
+RewriteEngine On
+
+# Langsung buka login saat akses root aplikasi.
+RewriteRule ^$ index.php [L]
+
+# API internal.
+RewriteRule ^api/?$ api/index.php [QSA,L]
+RewriteRule ^api/index\.php$ api/index.php [QSA,L]
+RewriteRule ^api/(.*)$ api/index.php?path=$1 [QSA,L]
+
+# Biarkan file dan folder asli tetap bisa diakses.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Routing aplikasi yang lebih bersih tanpa /app.
+RewriteRule ^dashboard/?$ home-admin.php [QSA,L]
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ home-admin.php?page=$1 [QSA,L]
+
+# Kompatibilitas URL lama tanpa .php.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_-]+)$ $1.php [L]
+
+# Fallback 404.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ 404.php [L]

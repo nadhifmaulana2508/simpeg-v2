@@ -1,0 +1,10 @@
+{
+    "name": "simpeg/application",
+    "description": "Sistem Informasi Kepegawaian",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.2",
+        "ext-mysqli": "*",
+        "phpoffice/phpspreadsheet": "^2.2"
+    }
+}

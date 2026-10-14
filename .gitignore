@@ -1,0 +1,97 @@
+# ==== Folder yang tidak perlu di-push ====
+# /db/
+/uploads/
+/upload/
+/uploads/foto/**
+/pages/assets/foto/**
+/assets/dokumen/**
+/documents/
+/document/
+/dokumen/
+/files/
+/tmp/
+/temp/
+/cache/
+
+# Laravel runtime files and generated storage
+/storage/app/public/**
+/storage/framework/cache/data/**
+/storage/framework/sessions/**
+/storage/framework/testing/**
+/storage/framework/views/**
+/storage/logs/**
+/bootstrap/cache/**
+/public/storage
+/vendor/
+/dist/koneksi.php
+# /komponen/
+/plugins/
+# /docs/
+/pages/assets/
+
+# ==== File sementara / lokal ====
+/db.sql
+/masq2971_simpeg (struktur only).sql
+/struktur-folder.txt
+/composer.phar
+*.sql
+*.sqlite
+*.sqlite3
+*.dump
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.iso
+*.img
+*.xlsx
+*.xls
+*.csv
+*.pdf
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.psd
+*.ai
+!pages/**/template-*.xlsx
+!pages/**/template-*.xls
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# ==== Upload dan hasil generate ====
+uploads/**
+upload/**
+documents/**
+document/**
+dokumen/**
+files/**
+tmp/**
+temp/**
+cache/**
+
+# ==== Sistem dan cache ====
+*.log
+*.tmp
+*.bak
+*.cache
+
+# ==== OS & IDE ====
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
+.history/
+
+/assets/
