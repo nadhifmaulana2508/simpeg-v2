@@ -237,3 +237,4 @@ Batas: local storage tidak dibagikan lintas perangkat dan dapat dihapus browser.
 Verifikasi: build TypeScript/Vite berhasil; 25 nama tabel legacy unik di mapping ditemukan pada ERD; halaman dev merespons HTTP 200; pemeriksaan kontras teks baru lulus. Browser tidak tersedia, sehingga save/unduh, click-through, dan visual mobile belum diverifikasi langsung. Status tetap `in_review`.
 
 Langkah berikut: lokakarya dengan SDM, pemilik KPI/Monbis, pemilik absensi, dan IT/DBA; catat field dan keputusan; lanjutkan uji browser saat tersedia.
+Commit implementasi: `af8c551` pada `origin/feature/prototype-fe`. PR belum dibuat.
