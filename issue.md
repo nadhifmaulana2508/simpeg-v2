@@ -238,3 +238,25 @@ Verifikasi: build TypeScript/Vite berhasil; 25 nama tabel legacy unik di mapping
 
 Langkah berikut: lokakarya dengan SDM, pemilik KPI/Monbis, pemilik absensi, dan IT/DBA; catat field dan keputusan; lanjutkan uji browser saat tersedia.
 Commit implementasi: `af8c551` pada `origin/feature/prototype-fe`. PR belum dibuat.
+
+### 15 Oktober 2026 - Rancangan tabel catatan per menu
+
+Pengguna meminta rancangan tabel untuk menyimpan catatan pada setiap menu, agar hasil diskusi menjadi pedoman pembangunan SIMPEG dan aplikasi lain.
+
+Hasil: ERD menambahkan katalog proyek/menu, sesi workshop, catatan bertipe dan berstatus review, riwayat revisi append-only, serta pemetaan metadata tabel/kolom legacy ke target. PRD menetapkan aturan approval, audit, privasi, REST API usulan, dan membedakan rancangan tersebut dari schema operasional pegawai. Template catatan menjelaskan bahwa tabel fisik belum dibuat dan catatan resmi masih dikelola melalui dokumen yang direview.
+
+Batas: penempatan database/service, identitas approver, retensi, serta kontrak API final belum diputuskan. Tidak ada koneksi atau perubahan database; perubahan dokumentasi ini belum di-commit/push.
+
+Verifikasi: `git diff --check` lulus; code fence Markdown seimbang dan tautan antar-dokumen relatif yang diperiksa mengarah ke file tersedia. Tidak ada build aplikasi karena hanya dokumen yang berubah.
+
+Langkah berikut: review model catatan dan persetujuan pemilik proses; setelah sumber data/owner dan penempatan dipilih, buat issue terpisah untuk REST API dan migrasi bertahap.
+
+### 15 Oktober 2026 - Fitur legacy dan tabel pada setiap menu
+
+Pengguna meminta setiap menu menampilkan tabel yang berkaitan serta penjelasan fitur pada menu SIMPEG lama.
+
+Hasil: panel setiap layar prototype kini memuat ringkasan fitur legacy, status bukti (`Menu aktif`, `Kode ditemukan`, atau `Belum ditemukan`), dan rujukan berkas lama. Seluruh 36 `ScreenId` memiliki peta fitur dan tabel terkait. Tabel lama ditandai kandidat berdasarkan DDL; relasi menu-tabel tetap perlu validasi kode dan pemilik proses. Tidak ditemukan bukti absensi harian, self-assessment, maupun integrasi KPI Monbis pada menu/route/halaman legacy yang ditinjau; DP3/SKP dipisahkan sebagai fitur lama. Label “Pengakatan Pegawai” dicatat mengarah ke form ubah ID dan perlu klarifikasi.
+
+Verifikasi: semua 36 layar memiliki detail fitur dan mapping tabel; seluruh path bukti yang dicantumkan ditemukan pada `legacy-origin/main`; 37 nama tabel legacy yang dipetakan semuanya ada di 44 definisi tabel dump SQL; `npm run build` dan pemeriksaan diff whitespace dijalankan. Halaman dev merespons HTTP 200. Browser interaktif tidak tersedia pada sesi ini, sehingga klik menu dan visual ponsel belum diperiksa langsung.
+
+Langkah berikut: validasi hasil dan relasi tabel bersama SDM/IT, lalu uji klik-through di browser desktop dan ponsel. Tidak ada commit atau push pada sesi ini.

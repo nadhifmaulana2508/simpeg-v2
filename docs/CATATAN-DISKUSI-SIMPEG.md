@@ -2,6 +2,8 @@
 
 Status: template kerja. Belum berisi keputusan bisnis yang disetujui.
 
+Untuk penyimpanan terpusat di masa depan, rancangan memakai `design_projects`, `design_menus`, `menu_workshops`, `menu_notes`, `menu_note_revisions`, dan `menu_data_mappings`. Lihat bagian 9 [ERD](ERD-SIMPEG-V2.md) untuk relasi serta kamus tabel. Rancangan tersebut belum dibuat sebagai tabel fisik; sumber keputusan resmi saat ini tetap dokumen Markdown yang direview. Catatan browser prototype hanya draft lokal dan tidak tersinkron.
+
 Dokumen ini menjadi tempat bersama untuk mencatat hasil workshop dengan Divisi SDM, pemilik KPI/Monbis, pemilik absensi, IT/SSO, dan DBA. Daftar tabel pada prototype dan [ERD konseptual](ERD-SIMPEG-V2.md) adalah kandidat awal, bukan keputusan schema.
 
 ## Cara menggunakan
@@ -11,6 +13,7 @@ Dokumen ini menjadi tempat bersama untuk mencatat hasil workshop dengan Divisi S
 3. Catat definisi data, validasi, alur, akses, pengecualian, dan keputusan pada template di bawah.
 4. Tandai setiap relasi sebagai `terkonfirmasi`, `kandidat`, `belum diketahui`, atau `tidak dipakai`, sertakan peran pemilik dan bukti yang dapat diperiksa.
 5. Catatan yang diketik pada prototype tersimpan hanya di browser lokal. Gunakan tombol unduh untuk mengekspor buku catatan Markdown, lalu tinjau dan pindahkan keputusan resmi ke dokumen ini.
+6. Setelah API catatan tersedia, gunakan identitas/menu/sesi yang sudah terdaftar; perubahan keputusan harus menghasilkan revisi dan mencantumkan approver.
 
 Jangan menyimpan nama/ID pegawai, NIK, nomor rekening, password, token, foto, dokumen, atau record pribadi di file diskusi/Git. Referensikan nama proses, nama kolom, dan lokasi bukti yang aksesnya sudah disetujui, bukan salinan datanya.
 
@@ -24,6 +27,10 @@ Salin bagian ini untuk setiap menu yang dibahas.
 - Tanggal diskusi:
 - Peran peserta (tanpa data pribadi):
 - Status review: `belum dibahas` / `kandidat` / `terkonfirmasi` / `tidak dipakai`
+- Fitur yang teramati pada menu/kode lama:
+- Status bukti: `menu aktif` / `kode ditemukan` / `belum ditemukan`
+- Rujukan file/sidebar/route legacy yang diperiksa:
+- Selisih antara fungsi lama dan rancangan menu baru:
 - Tabel legacy yang benar-benar digunakan:
 - Kolom yang dipakai dan definisinya:
 - Sumber dan pemilik data:

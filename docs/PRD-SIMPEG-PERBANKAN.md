@@ -398,6 +398,8 @@ Sebelum tabel fisik atau migrasi dibuat, tim mengadakan workshop per menu bersam
 
 Prototype menampilkan tabel legacy dan target usulan pada setiap menu, lalu menyediakan catatan per menu. Penyimpanan browser hanya bersifat lokal pada perangkat tersebut; hasil rapat resmi harus diekspor, ditinjau pemilik proses, dan disimpan ke dokumentasi proyek. Jangan masukkan PII, password, token, foto, atau isi dokumen pegawai ke catatan.
 
+Setiap layar prototype juga menjelaskan fitur yang teramati pada menu/kode SIMPEG lama dan menampilkan rujukan file sumber. Bedakan `menu aktif` (terlihat pada sidebar legacy), `kode ditemukan` (file/halaman tersedia tetapi aksesnya dari menu belum dipastikan), dan `belum ditemukan` pada sumber yang ditinjau. Nama tabel dari DDL adalah kandidat keterkaitan, bukan bukti bahwa menu memakai tabel tersebut. Jangan mengklaim absensi harian, self-assessment, KPI Monbis, atau alur penilai berjenjang sebagai fitur lama tanpa bukti. Perbedaan label dan route, seperti submenu “Pengakatan Pegawai” yang mengarah ke form ubah ID, ditampilkan sebagai pertanyaan validasi.
+
 Setiap halaman memiliki loading, kosong, error, retry yang relevan, izin ditolak, serta feedback sukses. Form mempertahankan input setelah gagal dan mencegah submit ganda. Filter/pagination dapat dibagikan melalui URL jika aman. Desain diuji desktop dan ponsel; tabel lebar memakai strategi responsive yang eksplisit.
 
 Gunakan copy Indonesia yang konkret, focus keyboard terlihat, label field, kontras memadai, dan status tidak hanya melalui warna. Tidak memakai dashboard dekoratif, angka palsu, atau tombol yang belum bekerja sebagai hasil selesai. Arah visual bank, logo, kepadatan, serta tema ditentukan sebelum UI tahap pertama.
@@ -407,6 +409,23 @@ Gunakan copy Indonesia yang konkret, focus keyboard terlihat, label field, kontr
 Usulan target untuk disepakati: API interaktif P95 <= 2 detik pada beban uji representatif; pekerjaan import/export besar memakai job; daftar minimal diuji dengan 100+ kantor dan dataset pegawai representatif. Beban pengguna serentak, jumlah pegawai, SLA, RPO/RTO, dan ukuran lampiran perlu dikonfirmasi sebelum mengunci angka.
 
 Backup harus diuji restore. Monitoring mencakup error API, kegagalan job, antrean, storage, auth, dan sync Monbis. Lingkungan dev/test memakai data sintetis atau anonimisasi yang disetujui; foto/.env/data produksi tidak dimasukkan repository.
+
+### 10.5 Penyimpanan catatan dan pedoman per menu
+
+Prototype saat ini menyimpan catatan di `localStorage`, sehingga hanya tersedia pada browser/perangkat yang sama dan bukan arsip resmi. Untuk mendukung workshop lintas divisi dan menjadi pedoman pembangunan ulang maupun aplikasi lain, rancangan target menyediakan katalog proyek-menu, sesi workshop, catatan terstruktur, riwayat revisi, serta peta tabel/kolom sumber ke target. Rancangan konseptual dan relasinya ada di bagian 9 [ERD](ERD-SIMPEG-V2.md).
+
+Aturan produk:
+
+- Satu katalog dapat menampung beberapa proyek; menu/submenu punya kode stabil dan hirarki.
+- Catatan per menu memiliki jenis, status review, pemilik peran, sumber bukti, keputusan/pertanyaan, dan hubungan opsional ke sesi workshop. Satu menu dapat mengumpulkan catatan dari banyak workshop; catatan draft boleh belum terikat sesi.
+- Status `confirmed` hanya diberikan oleh pemilik proses/approver yang berwenang. Perubahan membuat revisi baru; keputusan lama tetap dapat ditelusuri.
+- Pemetaan mencatat sistem, tabel dan bila perlu kolom sumber/target, status kepastian, tindakan migrasi, aturan transformasi/validasi, reviewer, serta alasan/bukti.
+- Catatan tidak boleh memuat PII pegawai, foto, isi dokumen, password, token, atau sampel record. Bukti dirujuk melalui lokasi yang aksesnya disetujui.
+- Catatan resmi perlu autentikasi dan audit perubahan. Penyimpanan lintas perangkat serta hak reviewer/approver harus ditegakkan oleh BE, bukan hanya disembunyikan di FE.
+
+Rute REST berikut adalah usulan kontrak awal, bukan endpoint yang sudah dibuat: `GET /api/v1/design-projects/{projectCode}/menus`, `GET /api/v1/design-projects/{projectCode}/menus/{menuCode}/notes`, `POST /api/v1/design-projects/{projectCode}/workshops`, `POST /api/v1/design-projects/{projectCode}/notes`, `PATCH /api/v1/menu-notes/{id}`, `GET /api/v1/menu-notes/{id}/revisions`, dan `POST /api/v1/menu-data-mappings`. Backend membuat snapshot revisi secara atomik setiap catatan berubah; klien tidak menulis langsung ke tabel revisi. Kontrak final wajib masuk OpenAPI dan menyediakan contoh `Try it out` di lingkungan lokal/test.
+
+Penempatan fisik tabel masih terbuka: dapat menjadi layanan dokumentasi/workshop terpisah atau modul dalam aplikasi. Jangan memasukkannya ke schema operasional pegawai `simpeg_v2` sebelum owner sistem menyetujui retensi, scope akses, pemilik data, dan kebutuhan penggunaan lintas aplikasi. Sampai saat itu, dokumen Markdown yang direview adalah sumber keputusan; catatan localStorage hanya draft.
 
 ## 11. Database dan ERD
 

@@ -791,3 +791,120 @@ Jangan tandai kolom sebagai tidak diperlukan hanya karena kolom tampak kosong at
 - Tim meninjau DDL serta penggunaan di kode lama. Tabel/kolom kandidat arsip memiliki bukti dan persetujuan.
 - Tim membuat schema `simpeg_v2` yang terpisah; database lama tetap tersedia dan tidak tertimpa.
 - Setelah gate disetujui, buat issue terpisah untuk schema tahap pertama. Jangan membangun seluruh ERD sekaligus.
+
+## 9. ERD katalog menu dan catatan workshop
+
+Bagian ini merancang penyimpanan terstruktur untuk pedoman pembahasan menu. Modelnya dapat dipakai ulang lintas proyek/aplikasi, termasuk SIMPEG. Ini **bukan** tabel operasional pegawai dan belum berarti tabel fisik dibuat di `simpeg_v2`. Lokasi penyimpanan final (database SIMPEG, layanan dokumentasi terpisah, atau sumber Markdown bersama) masih perlu diputuskan.
+
+```mermaid
+erDiagram
+    DESIGN_PROJECTS ||--o{ DESIGN_MENUS : memiliki
+    DESIGN_MENUS o|--o{ DESIGN_MENUS : parent
+    DESIGN_PROJECTS ||--o{ MENU_WORKSHOPS : dibahas_dalam
+    MENU_WORKSHOPS o|--o{ MENU_NOTES : menghasilkan
+    DESIGN_MENUS ||--o{ MENU_NOTES : memiliki
+    MENU_NOTES ||--o{ MENU_NOTE_REVISIONS : memiliki_riwayat
+    DESIGN_MENUS ||--o{ MENU_DATA_MAPPINGS : memetakan
+    MENU_NOTES o|--o{ MENU_DATA_MAPPINGS : mendasari
+
+    DESIGN_PROJECTS {
+        bigint id PK
+        varchar project_code UK
+        varchar name
+        varchar description
+        varchar status
+        varchar created_by
+        datetime created_at
+        datetime updated_at
+    }
+    DESIGN_MENUS {
+        bigint id PK
+        bigint project_id FK
+        bigint parent_menu_id FK
+        varchar menu_code
+        varchar name
+        varchar route_key
+        varchar owner_role
+        int sort_order
+        varchar status
+        datetime created_at
+        datetime updated_at
+    }
+    MENU_WORKSHOPS {
+        bigint id PK
+        bigint project_id FK
+        varchar title
+        varchar domain
+        varchar owner_unit
+        datetime held_at
+        varchar status
+        varchar created_by
+        datetime created_at
+    }
+    MENU_NOTES {
+        bigint id PK
+        bigint menu_id FK
+        bigint workshop_id FK
+        varchar note_kind
+        varchar title
+        text content
+        varchar review_status
+        varchar priority
+        varchar owner_role
+        varchar evidence_ref
+        varchar created_by
+        varchar approved_by
+        datetime approved_at
+        datetime created_at
+        datetime updated_at
+    }
+    MENU_NOTE_REVISIONS {
+        bigint id PK
+        bigint menu_note_id FK
+        int revision_no
+        varchar title_snapshot
+        text content_snapshot
+        varchar status_snapshot
+        varchar change_summary
+        varchar changed_by
+        datetime changed_at
+    }
+    MENU_DATA_MAPPINGS {
+        bigint id PK
+        bigint menu_id FK
+        bigint menu_note_id FK
+        varchar source_system
+        varchar source_table
+        varchar source_column
+        varchar target_table
+        varchar target_column
+        varchar mapping_status
+        varchar mapping_action
+        text transformation_rule
+        text validation_rule
+        varchar evidence_ref
+        varchar reviewed_by
+        datetime reviewed_at
+        datetime created_at
+        datetime updated_at
+    }
+```
+
+### Kamus tabel
+
+| Tabel | Fungsi dan aturan utama |
+| --- | --- |
+| `design_projects` | Satu proyek/pedoman, misalnya SIMPEG atau aplikasi lain. `project_code` unik dan stabil. Status: `draft`, `active`, `archived`. |
+| `design_menus` | Katalog menu dan submenu per proyek. `menu_code` unik di dalam proyek; `parent_menu_id` membentuk hierarki. Perubahan nama tidak menghapus catatan lama. Status: `draft`, `active`, `retired`. |
+| `menu_workshops` | Satu sesi pembahasan dengan domain/unit pemilik dan tanggal. Satu workshop dapat menghasilkan catatan untuk banyak menu. `status`: `scheduled`, `in_progress`, `closed`, `cancelled`. Catat peran/unit peserta tanpa data pribadi yang tidak diperlukan. |
+| `menu_notes` | Catatan terkini per menu: definisi field, aturan, workflow, akses, report, pengecualian, keputusan, pertanyaan, atau acceptance criteria. `note_kind`: `purpose`, `data_field`, `business_rule`, `workflow`, `permission`, `report`, `exception`, `decision`, `open_question`, `acceptance_criteria`, `migration`. Catatan draft boleh belum terikat workshop; satu catatan terikat ke paling banyak satu workshop, dan satu menu dapat memiliki catatan dari banyak workshop. `review_status`: `draft`, `candidate`, `confirmed`, `rejected`, `deferred`, `superseded`. Hanya pemilik proses/approver berwenang yang dapat mengesahkan. |
+| `menu_note_revisions` | Snapshot append-only setiap perubahan catatan, termasuk ringkasan perubahan dan status pada saat itu. Unique `(menu_note_id, revision_no)`; revisi keputusan tidak menimpa bukti keputusan sebelumnya. |
+| `menu_data_mappings` | Pemetaan metadata tabel/kolom sumber ke target untuk menu tertentu. Boleh satu baris tingkat tabel (kolom kosong) atau tingkat kolom. `mapping_status`: `candidate`, `confirmed`, `unknown`, `not_used`; `mapping_action`: `map`, `transform`, `archive`, `exclude`, `unresolved`. Nilai sumber/target adalah nama metadata, bukan FK ke database legacy. |
+
+### Aturan integritas dan pemakaian
+
+- Terapkan FK antar tabel dokumentasi; hapus proyek/menu/workshop yang sudah memiliki catatan dengan soft-retire/arsip, bukan cascade delete. Catatan/revisi yang disahkan tidak dihapus oleh pengguna biasa.
+- Identitas pembuat, pengubah, reviewer, dan approver mengacu ke subject pengguna dari auth yang disetujui. Bentuk FK ke tabel user ditetapkan setelah integrasi SSO dan kepemilikan layanan diputuskan.
+- Simpan `evidence_ref` sebagai tautan/ID dokumen berizin atau rujukan issue, bukan salinan foto, file pegawai, record, kredensial, atau token.
+- Catatan dalam browser `localStorage` tetap hanya draft prototype. Saat backend tersedia, catatan resmi harus melalui REST API dengan autentikasi, scope akses, validasi status, audit perubahan, dan kontrol approval.
+- Sebelum implementasi, sepakati apakah tabel ini menjadi modul dokumentasi terpisah atau disimpan pada schema aplikasi. Jangan campurkan dengan `employees`, `employee_profiles`, atau data operasional lainnya.

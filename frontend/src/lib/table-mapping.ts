@@ -102,6 +102,7 @@ export const tableMappings: Record<ScreenId, ScreenTableMapping> = {
   profileChange: {
     legacyTables: [
       { name: "tb_edit_pending", note: "Kandidat antrean perubahan; periksa payload, status, dan riwayat sebelum dipetakan." },
+      { name: "tb_notifikasi", note: "Tabel notifikasi tercantum di inventaris; hubungan ke pengajuan harus dicocokkan dengan kode." },
       employeeMaster,
     ],
     sourceCoverage: "Kandidat perubahan pending teridentifikasi; bentuk approval dan histori belum dikonfirmasi.",
@@ -118,6 +119,7 @@ export const tableMappings: Record<ScreenId, ScreenTableMapping> = {
     legacyTables: [
       { name: "tb_edit_pending", note: "Kandidat permohonan perubahan data." },
       { name: "tb_cuti", note: "Kandidat catatan cuti/izin; status persetujuannya perlu diperiksa." },
+      { name: "tb_notifikasi", note: "Tabel notifikasi tercantum di inventaris; kategori dan status bacanya perlu divalidasi." },
     ],
     sourceCoverage: "Status lintas jenis pengajuan mungkin berasal dari proses berbeda; relasi dan status belum dipastikan.",
     proposedTables: ["approval_cases", "approval_steps", "profile_change_requests", "leave_requests", "attendance_corrections"],
@@ -154,7 +156,11 @@ export const tableMappings: Record<ScreenId, ScreenTableMapping> = {
     discussionPrompt: "Rentang histori yang dibutuhkan, alasan koreksi, dan siapa yang dapat melihat detail per hari apa?",
   },
   employeeDirectory: {
-    legacyTables: [employeeMaster],
+    legacyTables: [
+      employeeMaster,
+      { name: "tb_recycle_bin_pegawai", note: "Kandidat cadangan data pegawai terhapus; alur pemulihan harus diverifikasi sebelum dipetakan." },
+      { name: "tb_recycle_bin", note: "Penyimpanan penghapusan lintas modul teramati pada beberapa proses; bukan daftar pegawai aktif." },
+    ],
     sourceCoverage: "Sumber daftar pegawai teridentifikasi. Filter dan batas data per kantor belum diputuskan.",
     proposedTables: ["employees", "employee_profiles", "employee_assignments", "offices", "organizational_units"],
     discussionPrompt: "Kolom apa yang tampil di daftar, filter yang dipakai, dan bagaimana scope kantor SDM dibatasi?",
@@ -171,6 +177,12 @@ export const tableMappings: Record<ScreenId, ScreenTableMapping> = {
       { name: "tb_mutasi", note: "Kandidat riwayat perpindahan kantor/unit." },
       { name: "tb_pangkat", note: "Kandidat riwayat pangkat." },
       { name: "tb_angkat", note: "Kandidat peristiwa pengangkatan; validasi arti status." },
+      { name: "tb_penugasan", note: "Kandidat riwayat penugasan; arti kolom perlu dikonfirmasi." },
+      { name: "tb_cuti", note: "Riwayat cuti lama, bukan catatan kehadiran harian." },
+      { name: "tb_penghargaan", note: "Kandidat riwayat penghargaan; pastikan masih termasuk kebutuhan." },
+      { name: "tb_hukuman", note: "Kandidat riwayat hukuman disiplin, data sensitif dengan akses khusus." },
+      { name: "tb_mastergol", note: "Kandidat referensi golongan; relasi dengan riwayat pangkat perlu divalidasi." },
+      { name: "tb_masteresl", note: "Kandidat referensi tingkat jabatan; keberlakuan perlu dikonfirmasi." },
       { name: "tb_master_jabatan", note: "Kandidat master jabatan; bandingkan dengan `tb_ref_jabatan`." },
       { name: "tb_ref_jabatan", note: "Kandidat referensi jabatan; jangan digabung sebelum pemakaian diverifikasi." },
     ],
@@ -187,8 +199,11 @@ export const tableMappings: Record<ScreenId, ScreenTableMapping> = {
   employeeTraining: {
     legacyTables: [
       { name: "tb_diklat", note: "Kandidat kegiatan atau keikutsertaan diklat." },
+      { name: "tb_biaya_pendidikan", note: "Kandidat daftar kegiatan dan anggaran pengembangan; cek hubungan ke peserta." },
       { name: "tb_lat_jabatan", note: "Kandidat riwayat pelatihan jabatan." },
       { name: "tb_seminar", note: "Perlu keputusan apakah masuk domain pelatihan." },
+      { name: "tb_ref_pengembangan", note: "Kandidat referensi kategori pengembangan." },
+      { name: "tb_ref_pelaksana", note: "Kandidat referensi jenis/pelaksana kegiatan." },
     ],
     sourceCoverage: "Kandidat beberapa tabel; hubungan peserta, program, dan bukti belum diverifikasi.",
     proposedTables: ["training_courses", "employee_trainings", "documents"],
@@ -226,6 +241,8 @@ export const tableMappings: Record<ScreenId, ScreenTableMapping> = {
       { name: "tb_kantor", note: "Kandidat sumber kantor." },
       { name: "tb_jabatan", note: "Kandidat sumber penempatan." },
       { name: "tb_diklat", note: "Kandidat sumber pelatihan." },
+      { name: "tb_biaya_pendidikan", note: "Kandidat sumber rekap biaya kegiatan diklat." },
+      { name: "tb_formasi", note: "Kandidat sumber formasi; kolom dan pemakaian perlu dikonfirmasi." },
       { name: "tb_sertifikasi", note: "Kandidat sumber sertifikasi." },
     ],
     sourceCoverage: "Laporan adalah agregat beberapa domain. KPI dan absensi tidak dianggap punya sumber legacy terkonfirmasi dari daftar ini.",
@@ -233,7 +250,7 @@ export const tableMappings: Record<ScreenId, ScreenTableMapping> = {
     discussionPrompt: "Laporan mana yang benar-benar diperlukan tiap divisi, definisi setiap kolom, scope kantor, dan aturan export apa?",
   },
   hrOfficeReport: {
-    legacyTables: [employeeMaster, { name: "tb_kantor", note: "Kandidat master kantor; jenis dan hierarki perlu disahkan." }, { name: "tb_jabatan", note: "Kandidat relasi pegawai ke jabatan/kantor." }],
+    legacyTables: [employeeMaster, { name: "tb_kantor", note: "Kandidat master kantor; jenis dan hierarki perlu disahkan." }, { name: "tb_jabatan", note: "Kandidat relasi pegawai ke jabatan/kantor." }, { name: "tb_mastergol", note: "Kandidat referensi golongan untuk laporan; relasi perlu diperiksa." }, { name: "tb_masteresl", note: "Kandidat referensi tingkat jabatan untuk laporan; pemakaian perlu diperiksa." }],
     sourceCoverage: "Kandidat kantor dan penempatan tersedia; relasi pusat, korwil, cabang, dan kankas perlu dikonfirmasi.",
     proposedTables: ["offices", "office_relationships", "organizational_units", "positions", "employee_assignments"],
     discussionPrompt: "Apa struktur resmi kantor, hubungan administratif vs koordinasi, dan periode berlakunya perubahan?",
@@ -241,8 +258,11 @@ export const tableMappings: Record<ScreenId, ScreenTableMapping> = {
   hrTrainingReport: {
     legacyTables: [
       { name: "tb_diklat", note: "Kandidat kegiatan/riwayat diklat." },
+      { name: "tb_biaya_pendidikan", note: "Kandidat daftar kegiatan, target peserta, dan anggaran." },
       { name: "tb_lat_jabatan", note: "Kandidat pelatihan terkait jabatan." },
       { name: "tb_seminar", note: "Kategori dan cakupan perlu keputusan HR." },
+      { name: "tb_ref_pengembangan", note: "Kandidat referensi kategori pengembangan." },
+      { name: "tb_ref_pelaksana", note: "Kandidat referensi jenis/pelaksana kegiatan." },
       { name: "tb_sertifikasi", note: "Kandidat sertifikasi dan masa berlaku." },
     ],
     sourceCoverage: "Beberapa kandidat tersedia; agregasi peserta, kategori, dan status verifikasi belum disepakati.",
@@ -301,6 +321,9 @@ export const tableMappings: Record<ScreenId, ScreenTableMapping> = {
     legacyTables: [
       { name: "tb_user", note: "Kandidat akun lama; password tidak dipindahkan dan `hak_akses` perlu review." },
       { name: "tb_apk", note: "Flag akses beberapa aplikasi; kolom password/OTP tidak dimigrasikan." },
+      { name: "tb_config", note: "Kandidat konfigurasi aplikasi; setiap nilai perlu klasifikasi dan tidak disalin tanpa review." },
+      { name: "tb_log_aktivitas", note: "Tabel log tercantum di inventaris DDL; halaman pembaca log lama belum teridentifikasi." },
+      { name: "tb_recycle_bin", note: "Kandidat penyimpanan data terhapus lintas modul; alur restore/purge terpusat belum dikonfirmasi." },
       employeeMaster,
     ],
     sourceCoverage: "`tb_apk` terkait entitlement aplikasi; DDL tidak membuktikan provisioning otomatis atau pemilik entitlement.",

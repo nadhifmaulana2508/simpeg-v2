@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
+import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { screenLabels, type ScreenId } from "../lib/navigation";
+import { legacyFeatureMap } from "../lib/legacy-feature-map";
 import { tableMappings, type ScreenTableMapping } from "../lib/table-mapping";
 
 type WorkshopNote = {
@@ -123,6 +125,7 @@ function TableReferences({ title, description, names, emptyText }: {
 
 export function TableWorkshopPanel({ screen }: { screen: ScreenId }) {
   const mapping = tableMappings[screen];
+  const legacyFeatures = legacyFeatureMap[screen];
   const [savedNote, setSavedNote] = useState(() => readNote(screen));
   const [draft, setDraft] = useState(() => readNote(screen));
   const [saveFeedback, setSaveFeedback] = useState("");
@@ -150,18 +153,58 @@ export function TableWorkshopPanel({ screen }: { screen: ScreenId }) {
 
   return (
     <section className="page-stack table-workshop-stack" aria-label={`Tabel dan catatan untuk ${screenLabels[screen]}`}>
+      <Card className="legacy-feature-card">
+        <CardHeader>
+          <div className="legacy-feature-header">
+            <div>
+              <CardTitle>Fitur pada SIMPEG lama</CardTitle>
+              <CardDescription>Menu lama: {legacyFeatures.legacyMenu}</CardDescription>
+            </div>
+            <Badge tone={legacyFeatures.coverage === "belum-ditemukan" ? "warning" : "neutral"}>
+              {legacyFeatures.coverage === "menu-aktif"
+                ? "Menu aktif"
+                : legacyFeatures.coverage === "route-terdeteksi"
+                  ? "Kode ditemukan"
+                  : "Belum ditemukan"}
+            </Badge>
+          </div>
+          <CardDescription>{legacyFeatures.summary}</CardDescription>
+          <CardDescription>“Menu aktif” berarti terlihat di sidebar lama. “Kode ditemukan” berarti file/halaman ada, tetapi belum tentu masih dapat diakses dari menu.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {legacyFeatures.features.length ? (
+            <ul className="legacy-feature-list">
+              {legacyFeatures.features.map((feature) => (
+                <li key={feature.title}>
+                  <h3>{feature.title}</h3>
+                  <p>{feature.description}</p>
+                  <div className="legacy-feature-evidence">
+                    <span>Rujukan kode lama</span>
+                    <div>{feature.evidence.map((path) => <code key={path}>{path}</code>)}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="legacy-feature-empty" role="note">
+              Ini bukan klaim bahwa fiturnya tidak pernah ada. Padanan belum ditemukan pada menu, route, dan halaman legacy yang ditinjau.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       <Card className="table-mapping-card">
         <CardHeader>
           <CardTitle>Tabel terkait</CardTitle>
-          <CardDescription>Peta awal dari inventaris DDL legacy dan ERD konseptual. Ini bahan diskusi, bukan keputusan skema.</CardDescription>
+          <CardDescription>Nama tabel berasal dari inventaris DDL lama. Keterkaitan tabel dengan menu tetap perlu dicocokkan dengan kode dan pemilik data.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="table-map-grid">
             <TableReferences
-              title="Sistem lama: tabel dan kolom"
+              title="Tabel dan kolom SIMPEG lama"
               description={mapping.sourceCoverage}
               names={mapping.legacyTables}
-              emptyText="Belum ada tabel sumber yang terkonfirmasi untuk menu ini."
+              emptyText="Belum ada tabel legacy yang dapat dikaitkan dengan menu ini."
             />
             <TableReferences
               title="Target yang diusulkan"

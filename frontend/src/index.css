@@ -1040,6 +1040,89 @@ textarea:focus-visible {
   margin-top: 22px;
 }
 
+.legacy-feature-header {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+
+.legacy-feature-header > div {
+  min-width: 0;
+}
+
+.legacy-feature-header .ui-badge {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+}
+
+.legacy-feature-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legacy-feature-list li {
+  min-width: 0;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+
+.legacy-feature-list h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.legacy-feature-list p,
+.legacy-feature-empty {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.legacy-feature-evidence {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.legacy-feature-evidence > div {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.legacy-feature-evidence code {
+  max-width: 100%;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: var(--panel-muted);
+  color: var(--ink);
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.legacy-feature-empty {
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
 .table-map-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
