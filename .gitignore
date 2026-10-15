@@ -94,4 +94,9 @@ Desktop.ini
 .vscode/
 .history/
 
+# SIMPEG v2 FE prototype output and dependencies
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.vite/
+
 /assets/
